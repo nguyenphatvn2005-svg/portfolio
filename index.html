@@ -1,179 +1,527 @@
-<!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Portfolio của Mai Minh Đương — Content Strategist, Storytelling & Branding.">
-  <title>Mai Minh Đương | Content Creator Portfolio</title>
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio của Mai Minh Đương — Content Creator, Content Strategist, Storytelling, Branding và Video Content."
+    />
+    <meta name="theme-color" content="#F8F8F6" />
+    <meta
+      property="og:title"
+      content="Mai Minh Đương | Content Creator Portfolio"
+    />
+    <meta
+      property="og:description"
+      content="Selected work, case studies và định hướng sáng tạo của Mai Minh Đương."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="static/images-videos/minhduong.jpg" />
+    <title>Mai Minh Đương | Content Creator Portfolio</title>
 
-  <link rel="icon" href="static/images-videos/Untitled.png" type="image/png">
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <link rel="stylesheet" href="static/css/styles.css">
-</head>
-<body class="overflow-x-hidden antialiased">
-  <nav class="fixed inset-x-0 top-0 z-50 border-b border-white/[.07] bg-[#090a0d]/75 backdrop-blur-xl">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-      <a href="#top" class="font-display text-xl font-bold italic tracking-tight text-white">M.M.Đ</a>
-
-      <div class="hidden items-center gap-8 text-xs font-semibold uppercase tracking-[.18em] text-white/55 md:flex">
-        <a class="nav-link transition hover:text-white" href="#about">Thông tin</a>
-        <a class="nav-link transition hover:text-white" href="#projects">Dự án</a>
-        <a class="nav-link transition hover:text-white" href="#contact">Liên hệ</a>
-      </div>
-
-      <a href="cv.pdf" target="_blank" rel="noopener" class="btn-secondary hidden md:inline-flex">
-        Xem CV <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
-      </a>
-
-      <button data-menu-button aria-label="Mở menu" aria-expanded="false" class="rounded-full border border-white/10 p-2.5 text-white md:hidden">
-        <i data-lucide="menu" class="h-5 w-5"></i>
-      </button>
+    <link
+      rel="icon"
+      href="static/images-videos/Untitled.png"
+      type="image/png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <link rel="stylesheet" href="static/css/styles.css" />
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true">
+      <span data-scroll-progress></span>
     </div>
 
-    <div data-mobile-menu class="hidden border-t border-white/10 bg-[#090a0d] px-6 py-5 md:hidden">
-      <div class="flex flex-col gap-4 text-sm text-white/70">
-        <a href="#about">Thông tin</a>
-        <a href="#projects">Dự án</a>
-        <a href="#contact">Liên hệ</a>
-        <a href="cv.pdf" target="_blank" rel="noopener">Xem CV</a>
-      </div>
-    </div>
-  </nav>
+    <header class="site-header" data-header>
+      <div class="container nav-shell">
+        <a class="brand" href="#top" aria-label="Về đầu trang">M.M.Đ</a>
 
-  <main id="top">
-    <section class="noise relative flex min-h-screen items-center overflow-hidden px-6 pb-20 pt-32">
-      <div class="absolute inset-0">
-        <img
-          src="https://thuthuatphanmem.vn/uploads/2018/08/21/hinh-nen-thien-nhien-phong-canh-dep-1_043140595.jpeg"
-          alt=""
-          class="h-full w-full object-cover opacity-25"
-        >
-        <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-[#090a0d]/75 to-[#090a0d]"></div>
-      </div>
+        <nav class="desktop-nav" aria-label="Điều hướng chính">
+          <a class="nav-link" data-nav-link href="#about">Giới thiệu</a>
+          <a class="nav-link" data-nav-link href="#projects">Dự án</a>
+          <a class="nav-link" data-nav-link href="#capabilities">Kỹ năng</a>
+          <a class="nav-link" data-nav-link href="#contact">Liên hệ</a>
+        </nav>
 
-      <div class="relative mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-[1.15fr_.85fr] md:items-end">
-        <div class="reveal">
-          <p class="mb-5 text-xs font-bold uppercase tracking-[.32em] text-[#d9b66f]">
-            Content Strategist · Storytelling · Branding
-          </p>
-
-          <h1 class="font-display max-w-4xl text-6xl font-bold italic leading-[.94] text-white sm:text-7xl md:text-[6.4rem]">
-            Mai Minh<br>Đương.
-          </h1>
-
-          <p class="mt-7 max-w-2xl text-base leading-8 text-white/60 md:text-lg">
-            Mình không chỉ làm content, mình kể những câu chuyện khiến người ta dừng lại, xem và nhớ.
-            Mỗi nội dung đều hướng đến mục tiêu thu hút, kết nối và chuyển đổi.
-          </p>
-
-          <div class="mt-9 flex flex-wrap gap-3">
-            <a href="#projects" class="btn-primary">
-              Xem dự án <i data-lucide="arrow-down" class="h-4 w-4"></i>
-            </a>
-            <a href="cv.pdf" target="_blank" rel="noopener" class="btn-secondary">Xem CV</a>
-          </div>
-        </div>
-
-        <div class="reveal md:justify-self-end">
-          <div class="glass max-w-sm rounded-[1.75rem] p-6">
-            <p class="text-xs uppercase tracking-[.2em] text-white/40">Profile</p>
-            <div class="mt-5 grid grid-cols-2 gap-6">
-              <div>
-                <strong class="block text-3xl text-[#d9b66f]">02+</strong>
-                <span class="mt-1 block text-xs leading-5 text-white/45">Năm kinh nghiệm</span>
-              </div>
-              <div>
-                <strong class="block text-3xl text-[#d9b66f]">100K+</strong>
-                <span class="mt-1 block text-xs leading-5 text-white/45">Lượt xem video</span>
-              </div>
-            </div>
-          </div>
+        <div class="nav-actions">
+          <a
+            class="cv-link desktop-cv"
+            href="cv.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem CV <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+          </a>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-button
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="Mở menu"
+          >
+            <span></span><span></span>
+          </button>
         </div>
       </div>
-    </section>
 
-    <section id="about" class="border-y border-white/[.07] bg-[#0e1015] py-24 md:py-32">
-      <div class="mx-auto grid max-w-6xl gap-14 px-6 md:grid-cols-[.8fr_1.2fr] md:items-center">
-        <div class="reveal">
-          <div class="aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-[#151820]">
-            <img
-              src="static/images-videos/minhduong.jpg"
-              alt="Mai Minh Đương"
-              loading="lazy"
-              class="h-full w-full object-cover grayscale transition duration-700 hover:grayscale-0"
-            >
-          </div>
-        </div>
-
-        <div class="reveal">
-          <p class="text-xs font-bold uppercase tracking-[.25em] text-[#d9b66f]">About me</p>
-          <h2 class="font-display mt-4 text-4xl italic leading-tight text-white md:text-6xl">
-            Tư duy nội dung đi cùng tư duy hình ảnh.
-          </h2>
-          <p class="mt-7 max-w-2xl text-base leading-8 text-gray-400">
-            Sinh viên năm 3 ngành Quan hệ công chúng tại
-            <strong class="font-semibold text-white">HUTECH</strong>, đồng thời là nhà sáng tạo nội dung video.
-            Mình có kinh nghiệm thực chiến trong việc lập kế hoạch truyền thông, sản xuất nội dung hình ảnh/video
-            bắt mắt và có tư duy tốt về hình ảnh. Mục tiêu của mình là sử dụng những kỹ năng bản thân có để tìm
-            một môi trường có thể cống hiến và trau dồi thêm.
-          </p>
-
-          <div class="mt-8 flex flex-wrap gap-3 text-xs uppercase tracking-[.15em] text-white/55">
-            <span class="rounded-full border border-white/10 px-4 py-2">Content Planning</span>
-            <span class="rounded-full border border-white/10 px-4 py-2">Video Content</span>
-            <span class="rounded-full border border-white/10 px-4 py-2">Storytelling</span>
-            <span class="rounded-full border border-white/10 px-4 py-2">Branding</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="projects" class="py-24 md:py-32">
-      <div class="mx-auto max-w-6xl px-6">
-        <div class="reveal mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.25em] text-[#d9b66f]">Selected work</p>
-            <h2 class="font-display mt-4 text-4xl italic text-white md:text-6xl">Dự án nổi bật</h2>
-          </div>
-          <p class="max-w-md text-sm leading-6 text-white/45">
-            Mỗi dự án được trình bày theo dạng case study để làm rõ vai trò, cách triển khai và kết quả.
-          </p>
-        </div>
-
-        <div data-project-grid class="grid gap-7 md:grid-cols-2"></div>
-      </div>
-    </section>
-
-    <section id="contact" class="border-t border-white/[.07] bg-[#0e1015] py-24 md:py-28">
-      <div class="mx-auto max-w-6xl px-6">
-        <div class="reveal flex flex-col justify-between gap-8 md:flex-row md:items-end">
-          <div class="max-w-2xl">
-            <p class="text-xs font-bold uppercase tracking-[.25em] text-[#d9b66f]">Contact</p>
-            <h2 class="font-display mt-4 text-4xl italic leading-tight text-white md:text-6xl">
-              Cùng tạo ra một câu chuyện đáng nhớ.
-            </h2>
-          </div>
-          <a href="cv.pdf" target="_blank" rel="noopener" class="btn-primary">
-            Xem CV <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+      <div
+        class="mobile-menu"
+        id="mobile-menu"
+        data-mobile-menu
+        aria-hidden="true"
+      >
+        <div class="mobile-menu-inner">
+          <p class="mobile-menu-label">Navigation</p>
+          <nav aria-label="Điều hướng di động">
+            <a href="#about"><span>01</span>Giới thiệu</a>
+            <a href="#projects"><span>02</span>Dự án</a>
+            <a href="#capabilities"><span>03</span>Kỹ năng</a>
+            <a href="#contact"><span>04</span>Liên hệ</a>
+          </nav>
+          <a
+            class="btn btn-primary mobile-cv"
+            href="cv.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem CV <i data-lucide="arrow-up-right" aria-hidden="true"></i>
           </a>
         </div>
       </div>
-    </section>
-  </main>
+    </header>
 
-  <footer class="border-t border-white/[.07] px-6 py-7 text-center text-xs text-white/35">
-    © Mai Minh Đương · Portfolio
-  </footer>
+    <main id="top">
+      <section class="hero section-pad" aria-labelledby="hero-title">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow reveal" data-delay="0">
+              Content Creator · Storytelling · Branding
+            </p>
+            <h1 class="hero-title reveal" id="hero-title" data-delay="1">
+              <span>Mai Minh</span>
+              <em>Đương.</em>
+            </h1>
+            <p class="hero-positioning reveal" data-delay="2">
+              Biến ý tưởng thành những câu chuyện có hình ảnh, có cảm xúc và có
+              mục tiêu.
+            </p>
+            <p class="hero-intro reveal" data-delay="3">
+              Content Creator với định hướng Storytelling, Visual Thinking,
+              Branding và Marketing — tập trung tạo nội dung khiến người xem
+              dừng lại, kết nối và ghi nhớ.
+            </p>
+            <div class="hero-actions reveal" data-delay="4">
+              <a class="btn btn-primary" href="#projects">
+                Xem dự án <i data-lucide="arrow-down" aria-hidden="true"></i>
+              </a>
+              <a
+                class="btn btn-secondary"
+                href="cv.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Xem CV <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div
+              class="hero-meta reveal"
+              data-delay="5"
+              aria-label="Thông tin nhanh"
+            >
+              <span>Content</span><span>Creative</span><span>2026</span>
+            </div>
+          </div>
 
-  <script src="static/js/projects.js"></script>
-  <script src="static/js/app.js"></script>
-</body>
+          <div class="hero-visual reveal" data-delay="2">
+            <div class="portrait-frame">
+              <img
+                src="static/images-videos/minhduong-cutout.png"
+                alt="Mai Minh Đương"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </div>
+            <div class="portrait-note" aria-hidden="true">
+              <span>VISUAL</span>
+              <span>STORYTELLING</span>
+            </div>
+            <span class="portrait-index" aria-hidden="true">01</span>
+          </div>
+        </div>
+      </section>
+      <section
+        class="about-section section-pad"
+        id="about"
+        aria-labelledby="about-title"
+      >
+        <div class="container about-grid">
+          <div class="about-image reveal">
+            <figure>
+              <img
+                src="static/images-videos/minhduong.jpg"
+                alt="Chân dung Mai Minh Đương"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>M.M.Đ — Content / Creative</figcaption>
+            </figure>
+          </div>
+
+          <div class="about-content">
+            <div class="reveal">
+              <p class="section-kicker">01 / About me</p>
+              <h2 id="about-title">
+                Tư duy nội dung<br />đi cùng <em>tư duy hình ảnh.</em>
+              </h2>
+            </div>
+
+            <p class="about-copy reveal">
+              Sinh viên năm 3 ngành Quan hệ công chúng tại
+              <strong>HUTECH</strong>, đồng thời là nhà sáng tạo nội dung video.
+              Mình có kinh nghiệm thực chiến trong việc lập kế hoạch truyền
+              thông, sản xuất nội dung hình ảnh/video bắt mắt và có tư duy tốt
+              về hình ảnh. Mục tiêu của mình là sử dụng những kỹ năng bản thân
+              có để tìm một môi trường có thể cống hiến và trau dồi thêm.
+            </p>
+
+            <dl class="about-meta reveal">
+              <div>
+                <dt>Education</dt>
+                <dd>HUTECH</dd>
+              </div>
+              <div>
+                <dt>Field</dt>
+                <dd>Public Relations</dd>
+              </div>
+              <div>
+                <dt>Focus</dt>
+                <dd>Content · Video · Branding</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+      <section class="numbers-section" aria-label="Thông tin nổi bật">
+        <div class="container stats-grid reveal">
+          <div class="stat-item">
+            <strong>02+</strong>
+            <span>Năm kinh nghiệm</span>
+          </div>
+          <div class="stat-item">
+            <strong>100K+</strong>
+            <span>Lượt xem video</span>
+          </div>
+          <div class="stat-item">
+            <strong data-project-count>02</strong>
+            <span>Featured projects</span>
+          </div>
+        </div>
+      </section>
+      <section
+        class="capabilities-section section-pad"
+        id="capabilities"
+        aria-labelledby="capabilities-title"
+      >
+        <div class="container">
+          <div class="section-heading reveal">
+            <div>
+              <p class="section-kicker">03 / What I do</p>
+              <h2 id="capabilities-title">Năng lực<br /><em>sáng tạo.</em></h2>
+            </div>
+            <p class="section-intro">
+              Tập trung vào nội dung, hình ảnh và cách thương hiệu kể câu chuyện
+              trên các nền tảng số.
+            </p>
+          </div>
+
+          <div class="capability-list reveal">
+            <div class="capability-row">
+              <span>01</span>
+              <h3>Content Strategy</h3>
+              <p>
+                Lập kế hoạch nội dung theo mục tiêu truyền thông và hành vi
+                người xem.
+              </p>
+            </div>
+            <div class="capability-row">
+              <span>02</span>
+              <h3>Video Production</h3>
+              <p>
+                Phát triển concept, quay và dựng video ngắn theo định hướng hình
+                ảnh rõ ràng.
+              </p>
+            </div>
+            <div class="capability-row">
+              <span>03</span>
+              <h3>Storytelling</h3>
+              <p>
+                Biến thông tin thành mạch kể có cảm xúc, nhịp điệu và điểm ghi
+                nhớ.
+              </p>
+            </div>
+            <div class="capability-row">
+              <span>04</span>
+              <h3>Branding</h3>
+              <p>
+                Giữ tính nhất quán giữa thông điệp, hình ảnh và cảm nhận thương
+                hiệu.
+              </p>
+            </div>
+            <div class="capability-row">
+              <span>05</span>
+              <h3>Social Media</h3>
+              <p>
+                Triển khai nội dung phù hợp đặc tính của từng nền tảng và đối
+                tượng.
+              </p>
+            </div>
+            <div class="capability-row">
+              <span>06</span>
+              <h3>Creative Direction</h3>
+              <p>
+                Định hướng concept và visual để nội dung có ngôn ngữ hình ảnh
+                thống nhất.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="projects-section section-pad"
+        id="projects"
+        aria-labelledby="projects-title"
+      >
+        <div class="container">
+          <div class="section-heading reveal">
+            <div>
+              <p class="section-kicker">02 / Selected work</p>
+              <h2 id="projects-title">Dự án nổi bật.</h2></h2>
+            </div>
+            <p class="section-intro">
+              Những dự án thể hiện cách mình kết hợp chiến lược nội dung, hình
+              ảnh và storytelling trong thực tế.
+            </p>
+          </div>
+
+          <div class="project-showcase" data-project-grid></div>
+        </div>
+      </section>
+
+      
+
+
+
+      
+      <!-- =========================
+          ACHIEVEMENTS
+      ========================= -->
+      <section
+        class="achievements-section section-pad"
+        id="achievements"
+        aria-labelledby="achievements-title"
+      >
+        <div class="container">
+
+          <div class="section-heading reveal">
+            <div>
+              <p class="section-kicker">04 / Achievements</p>
+
+              <h2 id="achievements-title">
+                Những dấu mốc<br />
+                <em>đáng nhớ.</em>
+              </h2>
+            </div>
+
+            <p class="section-intro">
+              Một vài dấu mốc ghi nhận quá trình học tập,
+              sáng tạo và thực hành trong lĩnh vực truyền thông.
+            </p>
+          </div>
+
+
+          <div class="achievement-list reveal">
+
+            <!-- ACHIEVEMENT 01 -->
+            <article class="achievement-item">
+              <span class="achievement-number">01</span>
+
+              <div class="achievement-content">
+                <span class="achievement-award">
+                  🏆 GIẢI NHẤT
+                </span>
+
+                <h3>Cuộc Thi Poster Show</h3>
+
+                <p>
+                  Dự án thiết kế xanh mang tính ứng dụng cao
+                  “Sử Dụng Lõi Ngô Làm Bộ Lót Ly/Lót Nồi”.
+                </p>
+
+                <span class="achievement-org">
+                  Đại học HUTECH · 2026
+                </span>
+              </div>
+            </article>
+
+
+            <!-- ACHIEVEMENT 02 -->
+            <article class="achievement-item">
+              <span class="achievement-number">02</span>
+
+              <div class="achievement-content">
+                <span class="achievement-award">
+                  🏆 GIẢI NHẤT
+                </span>
+
+                <h3>IMC Thực Chiến</h3>
+
+                <p>
+                  Kế hoạch Truyền thông Tích hợp xuất sắc
+                  cho chiến dịch ra mắt dòng sản phẩm mới.
+                </p>
+
+                <span class="achievement-org">
+                  Đại học HUTECH · 2026
+                </span>
+              </div>
+            </article>
+
+
+            <!-- ACHIEVEMENT 03 -->
+            <article class="achievement-item">
+              <span class="achievement-number">03</span>
+
+              <div class="achievement-content">
+                <span class="achievement-award">
+                  🏅 GIẢI KHUYẾN KHÍCH
+                </span>
+
+                <h3>Video Phóng Sự — “Đi Và Kể”</h3>
+
+                <p>
+                  Tác phẩm phóng sự tài liệu
+                  “Hải Trình Tiếp Nối”.
+                </p>
+
+                <span class="achievement-org">
+                  Đại học HUTECH · 2026
+                </span>
+              </div>
+            </article>
+
+          </div>
+
+        </div>
+      </section>
+      <!-- =========================
+     CONTACT / FINAL CTA
+      ========================= -->
+      <section
+        class="contact-section"
+        id="contact"
+        aria-labelledby="contact-title"
+      >
+        <div class="container contact-inner reveal">
+
+          <div class="contact-top">
+            <p class="section-kicker light">
+              05 / Contact
+            </p>
+
+            <span class="contact-index">
+              LET'S TALK
+            </span>
+          </div>
+
+
+          <h2 id="contact-title">
+            Let's make something
+            <br />
+            people <em>remember.</em>
+          </h2>
+
+
+          <p class="contact-question">
+            Did I make you stop?
+            <br />
+            Let's work together.
+          </p>
+
+
+          <div class="contact-details">
+
+            <a
+              href="mailto:maiminhduong26@gmail.com"
+              class="contact-detail"
+            >
+              <span>Email</span>
+              <strong>
+                maiminhduong26@gmail.com
+              </strong>
+            </a>
+
+
+            <a
+              href="tel:0345066105"
+              class="contact-detail"
+            >
+              <span>Phone</span>
+              <strong>
+                0345 066 105
+              </strong>
+            </a>
+
+
+            <div class="contact-detail">
+              <span>Location</span>
+              <strong>
+                TP. Hồ Chí Minh
+              </strong>
+            </div>
+
+          </div>
+
+
+          <div class="contact-actions">
+
+            <a
+              class="btn btn-light"
+              href="cv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Xem CV
+              <i
+                data-lucide="arrow-up-right"
+                aria-hidden="true"
+              ></i>
+            </a>
+
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>© 2026 Mai Minh Đương</span>
+        <span>Content Creator · Storytelling · Branding</span>
+        <a href="#top"
+          >Back to top <i data-lucide="arrow-up" aria-hidden="true"></i
+        ></a>
+      </div>
+    </footer>
+
+    <script src="static/js/projects.js"></script>
+    <script src="static/js/app.js"></script>
+  </body>
 </html>

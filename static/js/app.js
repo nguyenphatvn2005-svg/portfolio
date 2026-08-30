@@ -1,4 +1,8 @@
-const projects = window.PROJECTS || [];
+const projects = Array.isArray(window.PROJECTS) ? window.PROJECTS : [];
+
+/* =========================
+   SECURITY / HELPERS
+========================= */
 
 function escapeHTML(value = "") {
   return String(value)
@@ -9,321 +13,1265 @@ function escapeHTML(value = "") {
     .replaceAll("'", "&#039;");
 }
 
+function safeUrl(value = "") {
+  const url = String(value).trim();
+
+  if (!url) return "";
+
+  if (/^(https?:\/\/|mailto:|tel:)/i.test(url)) {
+    return escapeHTML(url);
+  }
+
+  if (/^[a-z0-9_./?=&%#-]+$/i.test(url)) {
+    return escapeHTML(url);
+  }
+
+  return "#";
+}
+
+/* =========================
+   ICONS
+========================= */
+
 function initIcons() {
   if (window.lucide) {
     window.lucide.createIcons();
   }
 }
 
+/* =========================
+   SCROLL REVEAL
+========================= */
+
 function initReveal() {
   const items = document.querySelectorAll(".reveal");
 
-  if (!("IntersectionObserver" in window)) {
-    items.forEach(item => item.classList.add("is-visible"));
+  if (!items.length) return;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    items.forEach((item) => {
+      item.classList.add("is-visible");
+    });
+
     return;
   }
 
   const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
+    (entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
+
           observer.unobserve(entry.target);
         }
       });
     },
-    { threshold: 0.12 }
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -4%",
+    },
   );
 
-  items.forEach(item => observer.observe(item));
+  items.forEach((item) => {
+    observer.observe(item);
+  });
 }
+
+/* =========================
+   HEADER
+========================= */
+
+function initHeader() {
+  const header = document.querySelector("[data-header]");
+
+  if (!header) return;
+
+  const update = () => {
+    header.classList.toggle("is-scrolled", window.scrollY > 20);
+  };
+
+  update();
+
+  window.addEventListener("scroll", update, {
+    passive: true,
+  });
+}
+
+/* =========================
+   SCROLL PROGRESS
+========================= */
+
+function initScrollProgress() {
+  const bar = document.querySelector("[data-scroll-progress]");
+
+  if (!bar) return;
+
+  const update = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+
+    const progress =
+      max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+
+    bar.style.width = `${progress}%`;
+  };
+
+  update();
+
+  window.addEventListener("scroll", update, {
+    passive: true,
+  });
+
+  window.addEventListener("resize", update);
+}
+
+/* =========================
+   MOBILE MENU
+========================= */
 
 function initMobileMenu() {
   const button = document.querySelector("[data-menu-button]");
+
   const menu = document.querySelector("[data-mobile-menu]");
 
   if (!button || !menu) return;
 
-  button.addEventListener("click", () => {
-    const open = !menu.classList.contains("hidden");
+  const setOpen = (open) => {
+    button.setAttribute("aria-expanded", String(open));
 
-    if (open) {
-      menu.classList.add("hidden");
-      button.setAttribute("aria-expanded", "false");
-    } else {
-      menu.classList.remove("hidden");
-      button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
+
+    menu.classList.toggle("is-open", open);
+
+    menu.setAttribute("aria-hidden", String(!open));
+
+    document.body.classList.toggle("menu-open", open);
+  };
+
+  button.addEventListener("click", () => {
+    const open = button.getAttribute("aria-expanded") !== "true";
+
+    setOpen(open);
+  });
+
+  menu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setOpen(false);
     }
   });
+}
 
-  menu.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      menu.classList.add("hidden");
-      button.setAttribute("aria-expanded", "false");
-    });
+/* =========================
+   ACTIVE NAVIGATION
+========================= */
+
+function initActiveNavigation() {
+  const links = [...document.querySelectorAll("[data-nav-link]")];
+
+  if (!links.length || !("IntersectionObserver" in window)) {
+    return;
+  }
+
+  const sections = links
+    .map((link) => {
+      const href = link.getAttribute("href");
+
+      return document.querySelector(href);
+    })
+    .filter(Boolean);
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+
+      links.forEach((link) => {
+        const active = link.getAttribute("href") === `#${visible.target.id}`;
+
+        link.classList.toggle("is-active", active);
+      });
+    },
+    {
+      rootMargin: "-30% 0px -55%",
+
+      threshold: [0.05, 0.2, 0.5],
+    },
+  );
+
+  sections.forEach((section) => {
+    observer.observe(section);
   });
 }
+
+/* =========================
+   PROJECT COUNT
+========================= */
+
+function renderProjectCount() {
+  const element = document.querySelector("[data-project-count]");
+
+  if (element) {
+    element.textContent = String(projects.length).padStart(2, "0");
+  }
+}
+
+/* =========================
+   HOMEPAGE PROJECTS
+========================= */
 
 function renderProjectCards() {
   const grid = document.querySelector("[data-project-grid]");
+
   if (!grid) return;
 
+  if (!projects.length) {
+    grid.innerHTML = `
+      <p class="section-intro">
+        Chưa có dự án để hiển thị.
+      </p>
+      `;
+
+    return;
+  }
+
   grid.innerHTML = projects
-    .map(
-      (project, index) => `
-        <a
-          href="project.html?id=${encodeURIComponent(project.id)}"
-          class="project-card group relative min-h-[430px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#111318] reveal"
-          aria-label="Xem dự án ${escapeHTML(project.title)}"
-        >
-          <img
-            src="${escapeHTML(project.cover)}"
-            alt="${escapeHTML(project.title)}"
-            loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover"
-            style="object-position:${escapeHTML(project.coverPosition || "50% 50%")};"
+    .map((project, index) => {
+      const number = project.number || String(index + 1).padStart(2, "0");
+
+      const tags =
+        Array.isArray(project.tags) && project.tags.length
+          ? `
+                <div class="project-tags">
+
+                  ${project.tags
+                    .map(
+                      (tag) =>
+                        `
+                        <span>
+                          ${escapeHTML(tag)}
+                        </span>
+                        `,
+                    )
+                    .join("")}
+
+                </div>
+              `
+          : "";
+
+      return `
+          <article
+            class="
+              project-preview
+              ${index % 2 ? "is-reverse" : ""}
+              reveal
+            "
           >
 
-          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/5"></div>
+            <a
+              class="project-media"
+              href="project.html?id=${encodeURIComponent(project.id)}"
+              aria-label="
+                Xem case study
+                ${escapeHTML(project.title)}
+              "
+            >
 
-          <div class="absolute inset-x-0 bottom-0 p-7 md:p-9">
-            <div class="mb-4 flex items-center justify-between gap-4">
-              <span class="text-[11px] font-bold uppercase tracking-[.22em] text-[#d9b66f]">
-                ${escapeHTML(project.eyebrow)}
-              </span>
-              <span class="text-[11px] uppercase tracking-[.18em] text-white/45">
-                ${String(index + 1).padStart(2, "0")}
-              </span>
+              <img
+                src="${safeUrl(project.cover)}"
+                alt="${escapeHTML(project.title)}"
+                loading="lazy"
+                decoding="async"
+                style="
+                  object-position:
+                  ${escapeHTML(project.coverPosition || "50% 50%")};
+                "
+              >
+
+            </a>
+
+
+            <div class="project-copy">
+
+              <div class="project-topline">
+
+                <span
+                  class="project-number"
+                >
+                  ${escapeHTML(number)}
+                </span>
+
+
+                <span
+                  class="project-role"
+                >
+                  ${escapeHTML(project.eyebrow || "Project")}
+                </span>
+
+              </div>
+
+
+              <h3>
+                ${escapeHTML(project.title)}
+              </h3>
+
+
+              <p>
+                ${escapeHTML(
+                  project.shortDescription || project.heroDescription || "",
+                )}
+              </p>
+
+
+              ${tags}
+
+
+              <a
+                class="project-cta"
+                href="project.html?id=${encodeURIComponent(project.id)}"
+              >
+
+                View Case Study
+
+                <i
+                  data-lucide="arrow-up-right"
+                  aria-hidden="true"
+                ></i>
+
+              </a>
+
             </div>
 
-            <h3 class="font-display text-3xl italic text-white md:text-4xl">
-              ${escapeHTML(project.title)}
-            </h3>
-
-            <p class="mt-3 max-w-md text-sm leading-6 text-white/65">
-              ${escapeHTML(project.shortDescription)}
-            </p>
-
-            <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
-              Xem case study
-              <i data-lucide="arrow-up-right" class="arrow h-4 w-4 text-[#d9b66f]"></i>
-            </span>
-          </div>
-        </a>
-      `
-    )
+          </article>
+          `;
+    })
     .join("");
 }
 
+/* =========================
+   PROJECT METADATA
+========================= */
+
+function makeMeta(project) {
+  const items = [
+    ["Role", project.eyebrow],
+
+    ["Category", project.category],
+
+    ["Year", project.year],
+  ].filter(([, value]) => value);
+
+  if (!items.length) {
+    return "";
+  }
+
+  return `
+    <dl class="project-meta-row">
+
+      ${items
+        .map(
+          ([label, value]) => `
+            <div>
+
+              <dt>
+                ${escapeHTML(label)}
+              </dt>
+
+              <dd>
+                ${escapeHTML(value)}
+              </dd>
+
+            </div>
+          `,
+        )
+        .join("")}
+
+    </dl>
+  `;
+}
+
+/* =========================
+   TEXT SECTION
+========================= */
+
+function makeTextSection(number, label, title, body) {
+  if (!body) {
+    return "";
+  }
+
+  return `
+    <section
+      class="
+        case-section
+        reveal
+      "
+    >
+
+      <div
+        class="
+          container
+          case-grid
+        "
+      >
+
+        <div>
+
+          <p class="case-label">
+            ${escapeHTML(number)}
+            —
+            ${escapeHTML(label)}
+          </p>
+
+
+          <h2 class="case-title">
+            ${escapeHTML(title)}
+          </h2>
+
+        </div>
+
+
+        <p class="case-copy">
+          ${escapeHTML(body)}
+        </p>
+
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================
+   ROLE
+========================= */
+
+function makeRoleSection(project) {
+  if (!Array.isArray(project.roles) || !project.roles.length) {
+    return "";
+  }
+
+  return `
+    <section
+      class="
+        case-section
+        reveal
+      "
+    >
+
+      <div
+        class="
+          container
+          case-grid
+        "
+      >
+
+        <div>
+
+          <p class="case-label">
+            06 — My Role
+          </p>
+
+
+          <h2 class="case-title">
+            Phạm vi<br>
+            trách nhiệm
+          </h2>
+
+        </div>
+
+
+        <ol class="editorial-list">
+
+          ${project.roles
+            .map(
+              (item, index) => `
+                <li>
+
+                  <span
+                    class="list-number"
+                  >
+                    ${String(index + 1).padStart(2, "0")}
+                  </span>
+
+
+                  <span
+                    class="list-text"
+                  >
+                    ${escapeHTML(item)}
+                  </span>
+
+                </li>
+              `,
+            )
+            .join("")}
+
+        </ol>
+
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================
+   PROCESS
+========================= */
+
+function makeProcessSection(project) {
+  if (!Array.isArray(project.process) || !project.process.length) {
+    return "";
+  }
+
+  return `
+    <section
+      class="
+        case-section
+        reveal
+      "
+    >
+
+      <div
+        class="
+          container
+          case-grid
+        "
+      >
+
+        <div>
+
+          <p class="case-label">
+            07 — Creative Process
+          </p>
+
+
+          <h2 class="case-title">
+            Quy trình<br>
+            thực hiện
+          </h2>
+
+        </div>
+
+
+        <ol class="editorial-list">
+
+          ${project.process
+            .map(
+              (item, index) => `
+                <li>
+
+                  <span
+                    class="list-number"
+                  >
+                    ${String(index + 1).padStart(2, "0")}
+                  </span>
+
+
+                  <span
+                    class="list-text"
+                  >
+                    ${escapeHTML(
+                      typeof item === "string" ? item : item.title || "",
+                    )}
+                  </span>
+
+                </li>
+              `,
+            )
+            .join("")}
+
+        </ol>
+
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================
+   MEDIA
+========================= */
+
+function makeMediaSections(project) {
+  if (!Array.isArray(project.mediaSections) || !project.mediaSections.length) {
+    return "";
+  }
+
+  return project.mediaSections
+    .map((section, sectionIndex) => {
+      const items = Array.isArray(section.items) ? section.items : [];
+
+      if (!items.length) {
+        return "";
+      }
+
+      const layout = ["full", "two", "three"].includes(section.layout)
+        ? `layout-${section.layout}`
+        : "";
+
+      const cards = items
+        .map((item, itemIndex) => {
+          if (section.type === "video") {
+            return `
+                    <figure
+                      class="
+                        media-card
+                        video-card
+                      "
+                    >
+
+                      <video
+                        controls
+                        preload="metadata"
+                        playsinline
+                        aria-label="
+                          ${escapeHTML(item.label || `Video ${itemIndex + 1}`)}
+                        "
+                      >
+
+                        <source
+                          src="${safeUrl(item.src)}"
+                          type="video/mp4"
+                        >
+
+                        Trình duyệt
+                        của bạn không
+                        hỗ trợ video
+                        HTML5.
+
+                      </video>
+
+
+                      ${
+                        item.label
+                          ? `
+                            <figcaption
+                              class="
+                                media-caption
+                              "
+                            >
+                              ${escapeHTML(item.label)}
+                            </figcaption>
+                          `
+                          : ""
+                      }
+
+                    </figure>
+                  `;
+          }
+
+          let style = "";
+
+          if (section.aspect === "portrait") {
+            style = "aspect-ratio:4/5;object-fit:cover;";
+          }
+
+          if (section.aspect === "square") {
+            style = "aspect-ratio:1/1;object-fit:cover;";
+          }
+
+          if (section.aspect === "landscape") {
+            style = "aspect-ratio:16/10;object-fit:cover;";
+          }
+
+          return `
+                  <figure
+                    class="media-card"
+                  >
+
+                    <img
+                      src="${safeUrl(item.src)}"
+                      alt="${escapeHTML(item.alt || project.title)}"
+                      loading="lazy"
+                      decoding="async"
+                      style="${style}"
+                    >
+
+
+                    ${
+                      item.label
+                        ? `
+                          <figcaption
+                            class="
+                              media-caption
+                            "
+                          >
+                            ${escapeHTML(item.label)}
+                          </figcaption>
+                        `
+                        : ""
+                    }
+
+                  </figure>
+                `;
+        })
+        .join("");
+
+      return `
+          <section
+            class="
+              media-section
+              reveal
+            "
+          >
+
+            <div class="container">
+
+              <div
+                class="
+                  media-heading
+                "
+              >
+
+                <div>
+
+                  <p
+                    class="
+                      section-kicker
+                    "
+                  >
+                    08 /
+                    Selected Work
+                  </p>
+
+
+                  <h2>
+                    ${escapeHTML(section.title || "Selected Work")}
+                  </h2>
+
+                </div>
+
+
+                <span
+                  class="
+                    media-count
+                  "
+                >
+                  ${String(sectionIndex + 1).padStart(2, "0")}
+                  /
+                  ${String(project.mediaSections.length).padStart(2, "0")}
+                </span>
+
+              </div>
+
+
+              <div
+                class="
+                  media-grid
+                  ${layout}
+                "
+              >
+
+                ${cards}
+
+              </div>
+
+            </div>
+
+          </section>
+        `;
+    })
+    .join("");
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+function makeResultsSection(project) {
+  if (!Array.isArray(project.results) || !project.results.length) {
+    return "";
+  }
+
+  return `
+    <section
+      class="
+        case-section
+        results-section
+        reveal
+      "
+    >
+
+      <div
+        class="
+          container
+          case-grid
+        "
+      >
+
+        <div>
+
+          <p class="case-label">
+            09 — Results
+          </p>
+
+
+          <h2 class="case-title">
+            Kết quả<br>
+            ghi nhận
+          </h2>
+
+        </div>
+
+
+        <ul class="results-list">
+
+          ${project.results
+            .map(
+              (item, index) => `
+                <li>
+
+                  <span>
+                    ${String(index + 1).padStart(2, "0")}
+                  </span>
+
+
+                  <strong>
+                    ${escapeHTML(item)}
+                  </strong>
+
+                </li>
+              `,
+            )
+            .join("")}
+
+        </ul>
+
+      </div>
+
+    </section>
+  `;
+}
+
+/* =========================
+   EXTERNAL LINKS
+========================= */
+
+function makeExternalLinks(project) {
+  if (!Array.isArray(project.links) || !project.links.length) {
+    return "";
+  }
+
+  return `
+    <div class="external-links">
+
+      ${project.links
+        .map(
+          (link) => `
+            <a
+              class="
+                btn
+                btn-secondary
+              "
+              href="${safeUrl(link.url)}"
+              target="_blank"
+              rel="
+                noopener
+                noreferrer
+              "
+            >
+
+              ${escapeHTML(link.label || "Xem chi tiết")}
+
+              <i
+                data-lucide="
+                  arrow-up-right
+                "
+                aria-hidden="true"
+              ></i>
+
+            </a>
+          `,
+        )
+        .join("")}
+
+    </div>
+  `;
+}
+
+/* =========================
+   PROJECT DETAIL PAGE
+========================= */
+
 function renderProjectPage() {
   const root = document.querySelector("[data-project-page]");
+
   if (!root) return;
 
   const id = new URLSearchParams(window.location.search).get("id");
-  const project = projects.find(item => item.id === id);
+
+  const project = projects.find((item) => item.id === id);
+
+  /* PROJECT 404 */
 
   if (!project) {
     document.title = "Không tìm thấy dự án | Mai Minh Đương";
 
     root.innerHTML = `
-      <main class="mx-auto flex min-h-[70vh] max-w-3xl items-center px-6 py-32 text-center">
-        <div class="w-full">
-          <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">404 / Project</p>
-          <h1 class="font-display mt-5 text-5xl italic">Không tìm thấy dự án</h1>
-          <p class="mx-auto mt-5 max-w-xl text-gray-400">ID dự án không tồn tại hoặc đường dẫn chưa đúng.</p>
-          <a class="btn-primary mt-8" href="index.html#projects">Quay lại dự án</a>
+      <main class="project-404">
+
+        <div>
+
+          <div class="big-404">
+            404
+          </div>
+
+
+          <p class="section-kicker">
+            404 / Project
+          </p>
+
+
+          <h1>
+            Không tìm thấy dự án.
+          </h1>
+
+
+          <p>
+            ID dự án không tồn tại
+            hoặc đường dẫn chưa đúng.
+          </p>
+
+
+          <a
+            class="
+              btn
+              btn-primary
+            "
+            href="
+              index.html#projects
+            "
+          >
+
+            <i
+              data-lucide="
+                arrow-left
+              "
+              aria-hidden="true"
+            ></i>
+
+            Quay lại
+            Selected Work
+
+          </a>
+
         </div>
+
       </main>
     `;
+
     return;
   }
 
-  document.title = `${project.title} | Mai Minh Đương`;
+  const currentIndex = projects.findIndex((item) => item.id === project.id);
 
-  const story = project.story
-    ? `
-      <section class="reveal border-t border-white/10 py-16 md:py-20">
-        <div class="grid gap-8 md:grid-cols-[.7fr_1.3fr]">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Approach</p>
-            <h2 class="font-display mt-3 text-3xl italic text-white">${escapeHTML(project.story.title)}</h2>
-          </div>
-          <p class="text-base leading-8 text-gray-400 md:text-lg">${escapeHTML(project.story.body)}</p>
-        </div>
-      </section>
-    `
-    : "";
-
-  const mediaSections = (project.mediaSections || [])
-    .map(section => {
-      const cards = section.items
-        .map(item => {
-          if (section.type === "video") {
-            return `
-              <figure class="media-card">
-                <video controls preload="metadata" playsinline class="aspect-[9/16] w-full bg-black object-cover">
-                  <source src="${escapeHTML(item.src)}" type="video/mp4">
-                  Trình duyệt của bạn không hỗ trợ video HTML5.
-                </video>
-                <figcaption class="px-4 py-3 text-xs uppercase tracking-[.16em] text-white/45">
-                  ${escapeHTML(item.label || "Video")}
-                </figcaption>
-              </figure>
-            `;
-          }
-
-          const aspect = section.aspect === "portrait" ? "aspect-[4/5]" : "aspect-square";
-
-          return `
-            <figure class="media-card">
-              <img
-                src="${escapeHTML(item.src)}"
-                alt="${escapeHTML(item.alt || project.title)}"
-                loading="lazy"
-                class="${aspect} w-full object-cover"
-              >
-            </figure>
-          `;
-        })
-        .join("");
-
-      return `
-        <section class="reveal border-t border-white/10 py-16 md:py-20">
-          <div class="mb-8 flex items-end justify-between gap-6">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Selected Work</p>
-              <h2 class="font-display mt-3 text-3xl italic text-white md:text-4xl">${escapeHTML(section.title)}</h2>
-            </div>
-          </div>
-          <div class="grid gap-5 md:grid-cols-3">${cards}</div>
-        </section>
-      `;
-    })
-    .join("");
-
-  const externalLinks = (project.links || [])
-    .map(
-      link => `
-        <a class="btn-secondary" href="${escapeHTML(link.url)}" target="_blank" rel="noopener noreferrer">
-          ${escapeHTML(link.label)} <i data-lucide="external-link" class="h-4 w-4"></i>
-        </a>
-      `
-    )
-    .join("");
-
-  const currentIndex = projects.findIndex(item => item.id === project.id);
   const nextProject = projects[(currentIndex + 1) % projects.length];
 
+  const number = project.number || String(currentIndex + 1).padStart(2, "0");
+
+  document.title = `${project.title} | Mai Minh Đương`;
+
+  const strategy =
+    project.strategy ||
+    project.approach ||
+    (project.story && project.story.body) ||
+    "";
+
+  const strategyTitle = project.strategy
+    ? "Chiến lược triển khai"
+    : project.approach
+      ? "Approach"
+      : (project.story && project.story.title) || "Strategy";
+
   root.innerHTML = `
-    <header class="relative min-h-[78vh] overflow-hidden border-b border-white/10 noise">
-      <img
-        src="${escapeHTML(project.heroImage)}"
-        alt="${escapeHTML(project.title)}"
-        class="absolute inset-0 h-full w-full object-cover opacity-45"
-        style="object-position:${escapeHTML(project.coverPosition || "50% 50%")};"
-      >
 
-      <div class="absolute inset-0 bg-gradient-to-t from-[#090a0d] via-black/55 to-black/25"></div>
+    <main class="case-study">
 
-      <div class="relative mx-auto flex min-h-[78vh] max-w-6xl items-end px-6 pb-16 pt-36 md:pb-20">
-        <div class="max-w-4xl reveal">
-          <a href="index.html#projects" class="mb-8 inline-flex items-center gap-2 text-sm text-white/60 transition hover:text-[#d9b66f]">
-            <i data-lucide="arrow-left" class="h-4 w-4"></i>
-            Tất cả dự án
-          </a>
 
-          <p class="text-xs font-bold uppercase tracking-[.3em] text-[#d9b66f]">
-            ${escapeHTML(project.eyebrow)} · Case Study
-          </p>
+      <!-- PROJECT HERO -->
 
-          <h1 class="font-display mt-5 text-5xl italic leading-[.98] text-white sm:text-6xl md:text-8xl">
-            ${escapeHTML(project.title)}
-          </h1>
+      <section class="project-hero">
 
-          <p class="mt-6 max-w-2xl text-base leading-7 text-white/65 md:text-lg">
-            ${escapeHTML(project.heroDescription)}
-          </p>
-        </div>
-      </div>
-    </header>
+        <div
+          class="
+            container
+            project-hero-grid
+          "
+        >
 
-    <main class="mx-auto max-w-6xl px-6">
-      <section class="reveal py-16 md:py-24">
-        <div class="grid gap-10 md:grid-cols-[.72fr_1.28fr]">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Overview</p>
-            <h2 class="font-display mt-3 text-3xl italic text-white md:text-4xl">Tổng quan dự án</h2>
+
+          <div
+            class="
+              project-hero-copy
+              reveal
+            "
+          >
+
+            <p class="section-kicker">
+
+              Project
+              ${escapeHTML(number)}
+
+              ·
+
+              ${escapeHTML(project.eyebrow || "Case Study")}
+
+            </p>
+
+
+            <h1>
+              ${escapeHTML(project.title)}
+            </h1>
+
+
+            <p
+              class="
+                project-hero-desc
+              "
+            >
+
+              ${escapeHTML(
+                project.heroDescription || project.shortDescription || "",
+              )}
+
+            </p>
+
+
+            ${makeMeta(project)}
+
           </div>
-          <p class="text-base leading-8 text-gray-400 md:text-lg">${escapeHTML(project.overview)}</p>
+
+
+          <div
+            class="
+              project-hero-image
+              reveal
+            "
+            data-delay="1"
+          >
+
+            <span
+              class="
+                project-hero-number
+              "
+            >
+              ${escapeHTML(number)}
+            </span>
+
+
+            <img
+              src="${safeUrl(project.heroImage || project.cover)}"
+              alt="${escapeHTML(project.title)}"
+              decoding="async"
+              fetchpriority="high"
+              style="
+                object-position:
+                ${escapeHTML(project.coverPosition || "50% 50%")};
+              "
+            >
+
+          </div>
+
         </div>
+
       </section>
 
-      <section class="reveal border-t border-white/10 py-16 md:py-20">
-        <div class="grid gap-12 md:grid-cols-2">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Responsibility</p>
-            <h2 class="font-display mt-3 text-3xl italic text-white">Vai trò</h2>
-            <ul class="mt-7 space-y-4">
-              ${project.roles
-                .map(
-                  item => `
-                    <li class="flex gap-3 text-gray-400">
-                      <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d9b66f]"></span>
-                      <span>${escapeHTML(item)}</span>
-                    </li>
-                  `
-                )
-                .join("")}
-            </ul>
-          </div>
 
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Outcome</p>
-            <h2 class="font-display mt-3 text-3xl italic text-white">Kết quả</h2>
-            <ul class="mt-7 space-y-4">
-              ${project.results
-                .map(
-                  item => `
-                    <li class="flex gap-3 text-gray-400">
-                      <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d9b66f]"></span>
-                      <span>${escapeHTML(item)}</span>
-                    </li>
-                  `
-                )
-                .join("")}
-            </ul>
-          </div>
-        </div>
-      </section>
+      ${makeTextSection("02", "Overview", "Tổng quan dự án", project.overview)}
 
-      ${story}
-      ${mediaSections}
 
-      <section class="reveal border-t border-white/10 py-16 md:py-24">
-        <div class="flex flex-col items-start justify-between gap-8 rounded-[2rem] border border-white/10 bg-white/[.025] p-7 md:flex-row md:items-end md:p-10">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[.24em] text-[#d9b66f]">Next case study</p>
-            <h2 class="font-display mt-3 text-3xl italic text-white md:text-4xl">${escapeHTML(nextProject.title)}</h2>
-            <a class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#d9b66f]" href="project.html?id=${encodeURIComponent(nextProject.id)}">
-              Xem dự án tiếp theo
-              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      ${makeTextSection("03", "Challenge", "The Challenge", project.challenge)}
+
+
+      ${makeTextSection("04", "Insight", "The Insight", project.insight)}
+
+
+      ${makeTextSection("05", "Strategy", strategyTitle, strategy)}
+
+
+      ${makeRoleSection(project)}
+
+
+      ${makeProcessSection(project)}
+
+
+      ${makeMediaSections(project)}
+
+
+      ${makeResultsSection(project)}
+
+
+      ${
+        project.links && project.links.length
+          ? `
+
+            <section
+              class="
+                case-section
+                reveal
+              "
+            >
+
+              <div
+                class="
+                  container
+                  case-grid
+                "
+              >
+
+                <div>
+
+                  <p class="case-label">
+                    External
+                  </p>
+
+
+                  <h2 class="case-title">
+                    Xem thêm<br>
+                    về dự án
+                  </h2>
+
+                </div>
+
+
+                <div>
+
+                  ${makeExternalLinks(project)}
+
+                </div>
+
+              </div>
+
+            </section>
+
+          `
+          : ""
+      }
+
+
+      ${
+        nextProject
+          ? `
+
+            <a
+              class="next-project"
+              href="
+                project.html?id=${encodeURIComponent(nextProject.id)}
+              "
+              aria-label="
+                Dự án tiếp theo:
+                ${escapeHTML(nextProject.title)}
+              "
+            >
+
+              <div
+                class="
+                  container
+                  next-project-inner
+                "
+              >
+
+
+                <div
+                  class="
+                    next-project-copy
+                  "
+                >
+
+                  <p
+                    class="
+                      section-kicker
+                    "
+                  >
+                    10 / Next Project
+                  </p>
+
+
+                  <h2>
+                    ${escapeHTML(nextProject.title)}
+                  </h2>
+
+
+                  <span
+                    class="
+                      next-project-arrow
+                    "
+                  >
+
+                    Xem case study
+
+                    <i
+                      data-lucide="
+                        arrow-right
+                      "
+                      aria-hidden="true"
+                    ></i>
+
+                  </span>
+
+                </div>
+
+
+                <div
+                  class="
+                    next-project-image
+                  "
+                >
+
+                  <img
+                    src="${safeUrl(nextProject.cover)}"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    style="
+                      object-position:
+                      ${escapeHTML(nextProject.coverPosition || "50% 50%")};
+                    "
+                  >
+
+                </div>
+
+              </div>
+
             </a>
-          </div>
 
-          <div class="flex flex-wrap gap-3">
-            ${externalLinks}
-            <a class="btn-primary" href="index.html#projects">Về trang chủ</a>
-          </div>
-        </div>
-      </section>
+          `
+          : ""
+      }
+
     </main>
   `;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================
+   START WEBSITE
+========================= */
+
+function boot() {
+  renderProjectCount();
+
   renderProjectCards();
+
   renderProjectPage();
+
   initMobileMenu();
+
+  initHeader();
+
+  initScrollProgress();
+
+  initActiveNavigation();
+
   initReveal();
+
   initIcons();
-});
+}
+
+document.addEventListener("DOMContentLoaded", boot);
